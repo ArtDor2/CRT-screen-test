@@ -1,6 +1,6 @@
 # Made by Artur Dorovskikh
 # CRT-screen-test v0.2 2020-03-02
-# This app is primarily for calibrating CRT monitors
+# This app is primarily for calibrating CRT computer monitors
 
 # TODO make spacing with commas neater
 # TODO add folders with done images at various rezolutions
@@ -25,6 +25,8 @@ screen = pygame.display.set_mode((width,height), pygame.FULLSCREEN)
 spacing = 40
 width_spacing = round(width/spacing)
 height_spacing = round(height/spacing)
+width_half = width/2
+height_half = height/2
 
 line_color = c_white
 back_color = c_black
@@ -44,56 +46,79 @@ def draw(back_color, line_color):
 
     pygame.display.flip()
 
+def draw_with_dots(line_color):
+    for x in range(round(width/spacing)):
+        pygame.draw.line(screen, line_color, (x*spacing, 0), (x*spacing, height))
+    for y in range(round(height/spacing)):
+        pygame.draw.line(screen, line_color, (0, y*spacing), (width, y*spacing))
+
+    pygame.draw.line(screen, line_color, (width-1, 0), (width-1, height))
+    pygame.draw.line(screen, line_color, (0, height-1), (width, height-1))
+
+    # draw the dots in the middle of the squares
+    for x in range(round(width/spacing)):
+        for y in range(round(height/spacing)):
+            x1 = x*spacing + spacing/2
+            y1 = y*spacing + spacing/2
+            pygame.draw.line(screen, line_color, (x1, y1), (x1, y1))
+
+    pygame.display.flip()
+
 def draw_convergence(back_color):
     # TODO add also white, along with red, gree, blue
     # draw each color line part vertical induvidually, easier, rather than have the loop alternate colors, 
 
+    # vertical lines
+    color = 0 # 0 = red, 1 = green, 2 = blue, 3 = repeat last color
+    color_repeat = 1
+    edge = 0
+    edge_y = round(height/spacing) # TODO adding +1 to both for loops fixes adjes rightmost and bottommost displaying, but the pattern shifts
+    for y in range(round(width/spacing)):
+        for x in range(round(width/spacing)):
+            if color == 0:
+                color_draw = c_red
+            elif color == 1:
+                color_draw = c_green
+            elif color == 2:
+                color_draw = c_blue
 
-
-
-
-
-    x, y = 0, 0
-    color_n = 0
-    # color_n_repeat = 2
-    count = 1
-    while x < width:
-        while y < height:
-            if color_n == 0:
-                line_color = c_red
-            elif color_n == 1:
-                line_color = c_green
-            elif color_n == 2:
-                line_color = c_blue
-
-            if count != 3:
-                color_n = (color_n + 1) % 3
-                count += 1
+            if x == edge_y:
+                edge = 1
+            pygame.draw.line(screen, color_draw, (x*spacing - edge, y*spacing - spacing/2), (x*spacing - edge, y*spacing + spacing/2))
+            
+            if color_repeat == 3:
+                color_repeat = 1
             else:
-                count = 1
+                color = (color + 1) % 3
+                color_repeat += 1
 
-            # if color_n == color_n_repeat:
-            #     color_n_repeat = (color_n_repeat + 1) % 3
-            # else:
-            #     color_n = (color_n + 1) % 3
+    # horizontal lines
+    color = 0 # 0 = red, 1 = green, 2 = blue, 3 = repeat last color
+    color_repeat = 1
+    edge = 0
+    edge_x = round(width/spacing)
+    for y in range(round(width/spacing)):
+        for x in range(round(width/spacing)):
+            if color == 0:
+                color_draw = c_red
+            elif color == 1:
+                color_draw = c_green
+            elif color == 2:
+                color_draw = c_blue
 
-            # if color_n == 3:
-            #     color_n = 2
-            #     color_n_skip = True
-            # else:
-            #     color_n = 3
-            #     color_n_skip = False
+            if x == edge_x:
+                edge = 1
+            pygame.draw.line(screen, color_draw, (x*spacing - spacing/2, y*spacing - edge), (x*spacing + spacing/2, y*spacing -edge))
+            
+            if color_repeat == 3:
+                color_repeat = 1
+            else:
+                color = (color + 1) % 3
+                color_repeat += 1
 
-            pygame.draw.line(screen, line_color, (x, y), (x + spacing, y + spacing))
-            y += spacing
-        x += spacing
-
-    # pygame.draw.line(screen,line_color,(width-1,0),(width-1,height))
-    # pygame.draw.line(screen,line_color,(0,height-1),(width,height-1))
     pygame.display.flip()
 
 def draw_dots():
-    # draw dots
     for x in range(width_spacing+1):
         for y in range(height_spacing+1):
             pygame.draw.line(screen,c_white,(x*spacing, y*spacing),(x*spacing, y*spacing))
@@ -139,43 +164,66 @@ def draw_reference_pixel_image():
 def draw_color_gradient():
     # draw a color gradient from across the screen horizontally
     # TODO function to draw color gradient across the screen
-    return
+    # draw a rectangle r red is left add, g green is right add, b blue is down add
+    for r in range(256):
+        for g in range(256):
+            for b in range(1):
+                # x1 = width_half-r
+                # y1 = height_half-g
+                # pygame.draw.line(screen, (r, g, b), (x1, y1), (x1, y1))
+                x1 = r
+                y1 = g
+                pygame.draw.line(screen, (r, g, b), (x1, y1), (x1, y1))
+    # for x in width:
+    #     for y in height:
+    #         surface.fill((r, g, b), ())
+    
+
+    pygame.display.flip()
 
 def draw_motion_response():
     # test motion response of the display
     # TODO function to draw moving image/pattern to test motion clarity
-    return
+    pygame.display.flip()
 
 def draw_test_high_voltage():
     # test high voltage response for CRT monitors
     # TODO function to draw white rectangle slightly smaller than the screen with black background, toggling every second
-    return
+    pygame.display.flip()
 
 def draw_black_level():
     # TODO draws squares of different brightness to test black levels and black crush
-    return
+    brightness = 1
+    scale = 100
+    # TODO center the rectangles
+    for x in range(5):
+        for y in range(3):
+            pygame.draw.rect(screen, (brightness, brightness, brightness), (scale*(x-1), scale*(y-1), scale*x, scale*y))
+            brightness += 1
+    pygame.display.flip()
 
 def draw_contrast():
     # TODO draws colors to test contrast
-    return
+    pygame.display.flip()
 
 def change_pattern(amount):  # change the patterns
     global pattern_number
-    pattern_number = (pattern_number + amount) % 9
+    pattern_number = (pattern_number + amount) % 12
     screen.fill(c_black) # clear last pattern
 
     # TODO implement switch statement using dictionaries, also use the names for menu labeling to reduce redundancy
     # TODO briefly (5 seconds) show the title of the pattern and its short explanation in bottom right
     if pattern_number == 0:
-        draw(c_black, c_white)
+        draw_with_dots(c_white)
     if pattern_number == 1:
-        draw(c_black, c_red)
+        draw_with_dots(c_red)
     if pattern_number == 2:
-        draw(c_black, c_green)
+        draw_with_dots(c_green)
     if pattern_number == 3:
-        draw(c_black, c_blue)
+        draw_with_dots(c_blue)
     if pattern_number == 4:
-        draw(c_white, c_black)
+        screen.fill(c_white)
+        draw_with_dots(c_black)
     if pattern_number == 5:
         draw_convergence(c_black)
     if pattern_number == 6:
@@ -196,7 +244,7 @@ def draw_menu():
     return
 
 def main():
-    draw(c_black, c_white)  # starter image white lines grid
+    change_pattern(0)  # starter image white lines grid
     # TODO briefly (5 seconds) show the controls (left and right for switching patterns, esc to exit, up and down for size) bottom right
 
     while True:
