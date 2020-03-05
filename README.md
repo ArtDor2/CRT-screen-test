@@ -3,6 +3,7 @@
 Run test.py to do the tests, use left and right arrow keys to switch between tests.
 
 TODO:
+- [x] create a working prototype
 - [ ] create release exe
 - [ ] fix convergence test
 - [ ] merge dots and lines tests (show dots in middle of squares), do for white, red, green, and blue
