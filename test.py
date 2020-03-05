@@ -1,5 +1,5 @@
 # Made by Artur Dorovskikh
-# CRT-screen-test v0.3 2020-03-05
+# CRT-screen-test v0.3.1 2020-03-05
 # This app is primarily for calibrating CRT computer monitors
 
 # TODO make spacing with commas neater
