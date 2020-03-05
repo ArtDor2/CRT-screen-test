@@ -1,4 +1,4 @@
-# CRT-screen-test
+# CRT-screen-test v0.2
 
 Run test.py to do the tests, use left and right arrow keys to switch between tests.
 
