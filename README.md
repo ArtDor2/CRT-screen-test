@@ -2,6 +2,8 @@
 
 Run test.py to do the tests, use left and right arrow keys to switch between tests.
 
+![Example](https://github.com/ArtDor2/CRT-screen-test/blob/master/Crt%20Screentest.jpg)
+
 TODO:
 - [x] create a working prototype
 - [ ] create release exe
