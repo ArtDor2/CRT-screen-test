@@ -1,5 +1,6 @@
 # CRT-screen-test v0.3 2020-03-05
 
+This app is primarily for calibrating CRT computer monitors, but can also be used on LCDs.
 Run test.py to do the tests, use left and right arrow keys to switch between tests.
 
 ![Example](https://github.com/ArtDor2/CRT-screen-test/blob/master/Crt%20Screentest.jpg)
