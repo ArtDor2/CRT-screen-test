@@ -1,5 +1,5 @@
 # Made by Artur Dorovskikh
-# CRT-screen-test v0.3.1 2020-03-05
+# CRT-screen-test v0.4 2020-03-
 # This app is primarily for calibrating CRT computer monitors
 
 # TODO make spacing with commas neater
@@ -11,8 +11,9 @@ import pygame
 import ctypes
 
 pygame.init()
-ctypes.windll.user32.SetProcessDPIAware() #disable windows scaling for this app
-# TODO: make borderless fulscreen so leaving app does not minimize it for more than one monitor systems, for when running windas and connecting the crt on the same computer 
+ctypes.windll.user32.SetProcessDPIAware() # disables windows scaling for this app
+# TODO: make borderless fulscreen so leaving app does not minimize it for more than one monitor systems, for when running windas and connecting the crt on the same computer
+pygame.display.set_caption('Monitor Test')
 
 c_white = (255, 255, 255)
 c_black = (0, 0, 0)
@@ -20,10 +21,14 @@ c_red = (255, 0, 0)
 c_green = (0, 255, 0)
 c_blue = (0, 0, 255)
 
+pattern_image = pygame.image.load('pattern_resolving.png')
+image_space = pygame.image.load('space_pure_black.jpg')
+
 width, height = pygame.display.Info().current_w, pygame.display.Info().current_h
-screen = pygame.display.set_mode((width,height), pygame.FULLSCREEN)
+screen = pygame.display.set_mode((width, height), pygame.FULLSCREEN)
+
 spacing = 40
-width_spacing = round(width/spacing)
+width_spacing = round(width/spacing) # replace all round() division with // for simplicity
 height_spacing = round(height/spacing)
 width_half = width/2
 height_half = height/2
@@ -66,7 +71,7 @@ def draw_with_dots(line_color):
 
 def draw_convergence(back_color):
     # TODO add also white, along with red, gree, blue
-    # draw each color line part vertical induvidually, easier, rather than have the loop alternate colors, 
+    # draw each color line part vertical induvidually, easier, rather than have the loop alternate colors,
 
     # vertical lines
     color = 0 # 0 = red, 1 = green, 2 = blue, 3 = repeat last color
@@ -85,7 +90,7 @@ def draw_convergence(back_color):
             if x == edge_y:
                 edge = 1
             pygame.draw.line(screen, color_draw, (x*spacing - edge, y*spacing - spacing/2), (x*spacing - edge, y*spacing + spacing/2))
-            
+
             if color_repeat == 3:
                 color_repeat = 1
             else:
@@ -109,7 +114,7 @@ def draw_convergence(back_color):
             if x == edge_x:
                 edge = 1
             pygame.draw.line(screen, color_draw, (x*spacing - spacing/2, y*spacing - edge), (x*spacing + spacing/2, y*spacing -edge))
-            
+
             if color_repeat == 3:
                 color_repeat = 1
             else:
@@ -122,7 +127,7 @@ def draw_dots():
     for x in range(width_spacing+1):
         for y in range(height_spacing+1):
             pygame.draw.line(screen,c_white,(x*spacing, y*spacing),(x*spacing, y*spacing))
-            
+
     for x in range(width_spacing+1):
         pygame.draw.line(screen,c_white,(x*spacing, height-1),(x*spacing, height-1))
     for y in range(height_spacing+1):
@@ -150,14 +155,15 @@ def draw_reference_pixel_image():
     # draw a reference pixel image to check if the pattern is resolved at a given resolution
 
     # draw the pattern several time on the screen
-    for off_y in range(height_spacing):
-        for off_x in range(width_spacing):
-            # draw 3 groups of the 2 top horizontal lines
-            # pattern_top_line_spacing = 6 # spacing for the top lines spacings
-            spacing_x = 0
-            spacing_y = 0
-            pygame.draw.line(screen, c_white, (off_x + spacing_x, off_y + spacing_y), (off_x + spacing_x + 5, off_y + spacing_y))
-            # TODO finish pixel reference image
+    for y in range(round(height/10)):
+        for x in range(round(width/24)):
+            screen.blit(pattern_image,(x*24,y*10))
+
+    pygame.display.flip()
+
+def draw_reference_pure_black_picture():
+    # test black levels (more true to life unlike ANSI test pattern)
+    screen.blit(image_space,(width_half-image_space.get_size()[0]/2,height_half-image_space.get_size()[1]/2))
 
     pygame.display.flip()
 
@@ -177,7 +183,7 @@ def draw_color_gradient():
     # for x in width:
     #     for y in height:
     #         surface.fill((r, g, b), ())
-    
+
 
     pygame.display.flip()
 
@@ -198,12 +204,12 @@ def draw_black_level():
     # TODO center the rectangles
     for x in range(5):
         for y in range(3):
-            pygame.draw.rect(screen, (brightness, brightness, brightness), (scale*(x-1), scale*(y-1), scale*x, scale*y))
+            pygame.draw.rect(screen, (brightness, brightness, brightness), (scale*(x-1), scale*(y-1), scale, scale))
             brightness += 1
     pygame.display.flip()
 
 def draw_contrast():
-    # TODO draws colors to test contrast
+    # TODO draws ANSI checkerboard pattern to test contrast
     pygame.display.flip()
 
 def change_pattern(amount):  # change the patterns
@@ -235,8 +241,10 @@ def change_pattern(amount):  # change the patterns
     if pattern_number == 9:
         draw_reference_pixel_image()
     if pattern_number == 10:
-        draw_black_level()
+        draw_reference_pure_black_picture()
     if pattern_number == 11:
+        draw_black_level()
+    if pattern_number == 12:
         draw_color_gradient()
 
 def draw_menu():
@@ -254,7 +262,7 @@ def main():
                 exit()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
-                    # pygame.quit()
+                    pygame.quit()
                     # TODO check if this is the correct way to exit pygame
                     return
                 if event.key == pygame.K_LEFT:
@@ -263,4 +271,3 @@ def main():
                     change_pattern(1)
 
 main()
-    
